@@ -1,0 +1,9 @@
+DataSources.csv		[DataSourceID, Country, DownloadDate, DatasetName, WebsiteURL, Comments]
+SWE, Sweden, 07/07/12, National Food Administration database vers 26/01/2012, http://www.slv.se/en-gb/Group1/Food-and-Nutrition/The-Food-Database
+
+Foods.csv		[DataSourceID, UniqueName, Description, ScientificName,	[(NutrientID, NutrientValue)]]
+SWE, Gingerbread biscuits, Gingerbread biscuits, none, [..., (Ash, 2.2), (Beta carotene, 10), ...]
+
+Nutrients.csv		[NutrientID, ValueUnit]
+[..., (Beta carotene, ug), (Ash, g), ...]
+
