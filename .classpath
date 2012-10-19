@@ -1,0 +1,19 @@
+<classpath>
+  <classpathentry output="target/scala-2.9.2/classes" path="src/main/scala" kind="src"></classpathentry>
+  <classpathentry output="target/scala-2.9.2/classes" path="src/main/java" kind="src"></classpathentry>
+  <classpathentry output="target/scala-2.9.2/test-classes" path="src/test/scala" kind="src"></classpathentry>
+  <classpathentry output="target/scala-2.9.2/test-classes" path="src/test/java" kind="src"></classpathentry>
+  <classpathentry path="org.scala-ide.sdt.launching.SCALA_CONTAINER" kind="con"></classpathentry>
+  <classpathentry path="/home/alex/.ivy2/cache/org.neo4j/neo4j/jars/neo4j-1.8.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/alex/.ivy2/cache/org.neo4j/neo4j-kernel/jars/neo4j-kernel-1.8.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/alex/.ivy2/cache/org.apache.geronimo.specs/geronimo-jta_1.1_spec/jars/geronimo-jta_1.1_spec-1.1.1.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/alex/.ivy2/cache/org.neo4j/neo4j-lucene-index/jars/neo4j-lucene-index-1.8.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/alex/.ivy2/cache/org.apache.lucene/lucene-core/jars/lucene-core-3.5.0.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/alex/.ivy2/cache/org.neo4j/neo4j-graph-algo/jars/neo4j-graph-algo-1.8.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/alex/.ivy2/cache/org.neo4j/neo4j-udc/jars/neo4j-udc-1.8.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/alex/.ivy2/cache/org.neo4j/neo4j-graph-matching/jars/neo4j-graph-matching-1.8.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/alex/.ivy2/cache/org.neo4j/neo4j-cypher/jars/neo4j-cypher-1.8.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/alex/.ivy2/cache/org.neo4j/neo4j-jmx/jars/neo4j-jmx-1.8.jar" kind="lib"></classpathentry>
+  <classpathentry path="org.eclipse.jdt.launching.JRE_CONTAINER" kind="con"></classpathentry>
+  <classpathentry path="bin" kind="output"></classpathentry>
+</classpath>

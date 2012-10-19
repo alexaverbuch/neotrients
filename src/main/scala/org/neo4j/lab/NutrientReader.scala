@@ -1,4 +1,4 @@
-package main
+package org.neo4j.lab
 
 import common._
 import scala.io.Source

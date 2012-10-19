@@ -1,4 +1,4 @@
-package main
+package org.neo4j.lab
 
 // Useful links:
 // http://blog.fakod.eu/2010/10/04/neo4j-example-written-in-scala/
