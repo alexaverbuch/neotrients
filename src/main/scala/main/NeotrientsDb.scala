@@ -34,7 +34,9 @@ class NeotrientsDb(path: String) {
 
   // Create and return wrapper classes for the Nodes and Relationships?
   def getDataSource(datasourceId: String) = ???
+
   def getNutrient(nutrientName: String) = ???
+
   def getFood(foodName: String) = ???
 
   def addDataSources(dss: Iterator[DataSource]) = addNutritionRecords(dss, addDataSource0)
