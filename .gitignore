@@ -2,6 +2,15 @@
 *.log
 .classpath
 .project
+.cache
+
+# Play!
+logs
+tmp
+.history
+.settings
+.target
+nutrients_db/
 
 # sbt specific
 dist/*
@@ -10,6 +19,8 @@ lib_managed/
 src_managed/
 project/boot/
 project/plugins/project/
+project/project
+project/target
 
 # Scala-IDE specific
 .scala_dependencies
