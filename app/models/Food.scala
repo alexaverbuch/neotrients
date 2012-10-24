@@ -12,6 +12,9 @@ class Food(node: Node) {
   def getDescription = underlyingNode.getProperty(Food.DESC)
   def getScientific = underlyingNode.getProperty(Food.SCIENTIFIC)
 
+  def toJsonSmall = ???
+  def toJsonBig = ???
+
   override def hashCode = underlyingNode.hashCode
   override def equals(obj: Any) =
     if (obj.isInstanceOf[Food]) {

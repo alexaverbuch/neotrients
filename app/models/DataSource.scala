@@ -5,18 +5,31 @@ import RelTypes._
 
 import play.api.db._
 import play.api.Play.current
+import play.api.libs.json._
+import play.api.libs.json.Json._
 
 import org.neo4j.graphdb.Node
 
 class DataSource(personNode: Node) {
   private val underlyingNode: Node = personNode
 
-  def getDatasetId = underlyingNode.getProperty(DataSource.DATASET_ID)
-  def getCountry = underlyingNode.getProperty(DataSource.COUNTRY)
-  def getDate = underlyingNode.getProperty(DataSource.DATE)
-  def getName = underlyingNode.getProperty(DataSource.NAME)
-  def getUrl = underlyingNode.getProperty(DataSource.URL)
-  def getComment = underlyingNode.getProperty(DataSource.COMMENT)
+  def getDatasetId: String = underlyingNode.getProperty(DataSource.DATASET_ID).asInstanceOf[String]
+  def getCountry: String = underlyingNode.getProperty(DataSource.COUNTRY).asInstanceOf[String]
+  def getDate: String = underlyingNode.getProperty(DataSource.DATE).asInstanceOf[String]
+  def getName: String = underlyingNode.getProperty(DataSource.NAME).asInstanceOf[String]
+  def getUrl: String = underlyingNode.getProperty(DataSource.URL).asInstanceOf[String]
+  def getComment: String = underlyingNode.getProperty(DataSource.COMMENT).asInstanceOf[String]
+
+  def toJsonSmall = toJson(Map(
+    DataSource.COUNTRY -> getCountry,
+    DataSource.NAME -> getName))
+  def toJsonBig = toJson(Map(
+    DataSource.DATASET_ID -> getDatasetId,
+    DataSource.COUNTRY -> getCountry,
+    DataSource.DATE -> getDate,
+    DataSource.NAME -> getName,
+    DataSource.URL -> getUrl,
+    DataSource.COMMENT -> getComment))
 
   override def hashCode = underlyingNode.hashCode
   override def equals(obj: Any) =

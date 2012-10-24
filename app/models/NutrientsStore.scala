@@ -3,12 +3,17 @@ package models
 // Useful links:
 // http://blog.fakod.eu/2010/10/04/neo4j-example-written-in-scala/
 
+import scala.collection.JavaConversions._
+
 import org.neo4j.graphdb._
 import org.neo4j.kernel.impl.util.FileUtils
 import org.neo4j.graphdb.factory.GraphDatabaseFactory
 import org.neo4j.graphdb.index.IndexManager
 import org.neo4j.graphdb.index.Index
 import org.neo4j.helpers.collection.IteratorUtil
+import org.neo4j.graphdb.index.IndexHits
+import org.neo4j.cypher.ExecutionEngine
+//import org.neo4j.cypher.ExecutionResult
 
 import java.io.File
 
@@ -32,19 +37,26 @@ object NutrientsStore {
 class NutrientsStore(private val path: String) {
   private var graphDb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(path).newGraphDatabase
   private var nodeIndex = graphDb.index.forNodes("nodes")
+  private var engine: ExecutionEngine = new ExecutionEngine(graphDb);
 
   def getDataSourceById(datasetId: String) =
     new DataSource(nodeIndex.get(DataSource.DATASET_ID, datasetId).getSingle)
+  def getAllDataSources: Iterator[DataSource] =
+    nodeIndex.get(NODE_TYPE, NodeTypes.DATASOURCE_NODE_TYPE).iterator.map(new DataSource(_))
   def getDataSourceCount =
     IteratorUtil.count(nodeIndex.get(NODE_TYPE, NodeTypes.DATASOURCE_NODE_TYPE).iterator)
 
   def getNutrientByName(nutrientName: String) =
     new Nutrient(nodeIndex.get(Nutrient.NAME, nutrientName).getSingle)
+  def getAllNutrients: Iterator[Nutrient] =
+    nodeIndex.get(NODE_TYPE, NodeTypes.NUTRIENT_NODE_TYPE).iterator.map(new Nutrient(_))
   def getNutrientCount =
     IteratorUtil.count(nodeIndex.get(NODE_TYPE, NodeTypes.NUTRIENT_NODE_TYPE).iterator)
 
   def getFoodByName(foodName: String) =
     new Food(nodeIndex.get(Food.NAME, foodName).getSingle)
+  def getAllFoods: Iterator[Food] =
+    nodeIndex.get(NODE_TYPE, NodeTypes.FOOD_NODE_TYPE).iterator.map(new Food(_))
   def getFoodCount =
     IteratorUtil.count(nodeIndex.get(NODE_TYPE, NodeTypes.FOOD_NODE_TYPE).iterator)
 
@@ -68,7 +80,7 @@ class NutrientsStore(private val path: String) {
 
   private def createDb {
     Logger.info("Creating database instance...")
-    val config = new java.util.HashMap[String, String]
+    val config = Map[String, String]()
     config.put("neostore.nodestore.db.mapped_memory", "10M")
     config.put("string_block_size", "60")
     config.put("array_block_size", "300")

@@ -24,6 +24,7 @@ object Application extends Controller {
   }
 
   def datasources = Action {
+    val i = NutrientsStore().getAllDataSources
     Ok("%s DataSource records found".format(NutrientsStore().getDataSourceCount))
   }
 

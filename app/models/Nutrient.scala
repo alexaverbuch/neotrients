@@ -10,6 +10,9 @@ class Nutrient(node: Node) {
   def getName = underlyingNode.getProperty(Nutrient.NAME)
   def getUnit = underlyingNode.getProperty(Nutrient.UNIT)
 
+  def toJsonSmall = ???
+  def toJsonBig = ???
+
   override def hashCode = underlyingNode.hashCode
   override def equals(obj: Any) =
     if (obj.isInstanceOf[Nutrient]) {
@@ -24,7 +27,7 @@ object Nutrient {
   val NAME = "nu_name"
   val UNIT = "nu_unit"
 
-  def all(): List[Food] = ???
+  def all(): List[Nutrient] = ???
 
   def create(id: String) { ??? }
 

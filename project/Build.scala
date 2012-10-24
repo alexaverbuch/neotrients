@@ -4,7 +4,7 @@ import PlayProject._
 
 object ApplicationBuild extends Build {
 
-    val appName         = "neotrients_web"
+    val appName         = "neotrients"
     val appVersion      = "1.0"
       
     resolvers ++= Seq("neo4j-public-repository" at "http://m2.neo4j.org/releases")
