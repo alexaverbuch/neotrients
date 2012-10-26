@@ -10,6 +10,8 @@ import org.neo4j.cypher.ExecutionEngine
 import org.neo4j.cypher.ExecutionResult
 import org.neo4j.play.Neo4j
 
+import play.api._
+
 object Food {
   val DATASET_ID = "fd_ds_id"
   val NAME = "fd_name"
@@ -36,6 +38,7 @@ object Food {
 }
 
 class Food(node: Node) {
+  private val PREVIEW = 2
   private val underlyingNode: Node = node
 
   def getDatasetId: String = underlyingNode.getProperty(Food.DATASET_ID).asInstanceOf[String]
@@ -58,31 +61,49 @@ class Food(node: Node) {
 
   def toJsonSmall = toJson(Map(
     Food.NAME -> getName,
-    Food.DESC -> getDescription))
+    Food.DESC -> getDescription,
+    Food.NUTRIENTS -> toJson(getFirstNutrientValues(PREVIEW).map(m => toJson(m)).toList).toString))
   def toJsonBig = toJson(Map(
     Food.DATASET_ID -> getDatasetId,
     Food.NAME -> getName,
     Food.DESC -> getDescription,
     Food.SCIENTIFIC -> getScientific,
-    Food.NUTRIENTS -> toJson(getFirstNutrients(3)).toString))
+    Food.NUTRIENTS -> toJson(getNutrientValues.map(m => toJson(m)).toList).toString))
 
-  private def getFirstNutrients(n: Int) =
-    getNutrients.take(n).map(m => toJson(m)).toList
-  private def getNutrients: Iterator[Map[String, String]] = {
+  private def getFirstNutrientValues(n: Int): Iterator[Map[String, String]] =
+    getNutrientValues.take(n)
+  private def getNutrientValues: Iterator[Map[String, String]] = {
     val queryResult =
+      //      Neo4j().doCypher("""
+      //              START food=node({id}) 
+      //              MATCH food-[contains:{relType}]->nutrient 
+      //              RETURN nutrient.{nutrientName} AS name, contains.{foodAmount} AS amount""",
+      //        Map(
+      //          "id" -> underlyingNode.getId(),
+      //          "relType" -> RelTypes.FOOD_CONTAINS,
+      //          "nutrientName" -> Nutrient.NAME,
+      //          "foodAmount" -> Food.NUTRIENT_AMOUNT))
       Neo4j().doCypher("""
-        START food=node({id}) 
-        MATCH food-[contains:{relType}]->nutrient 
-        RETURN nutrient.name AS name, contains.{propName} AS amount""",
-
-        Map("id" -> underlyingNode.getId(),
-          "relType" -> RelTypes.FOOD_CONTAINS,
-          "propName" -> Food.NUTRIENT_AMOUNT))
+            START food=node(%s) 
+            MATCH food-[contains:%s]->nutrient 
+            RETURN nutrient.%s AS name, contains.%s AS amount""".
+        format(underlyingNode.getId(), RelTypes.FOOD_CONTAINS, Nutrient.NAME, Food.NUTRIENT_AMOUNT))
 
     queryResult.map(n => Map(
       "name" -> n("name").toString,
       "amount" -> n("amount").toString))
   }
+
+//  private def getNutrients: Iterator[Nutrient] = {
+//    val queryResult =
+//      Neo4j().doCypher("""
+//            START food=node(%s) 
+//            MATCH food-[:%s]->nutrient 
+//            RETURN nutrient AS n""".
+//        format(underlyingNode.getId(), RelTypes.FOOD_CONTAINS))
+//
+//    queryResult.map(n => new Nutrient(n))
+//  }
 
   override def hashCode = underlyingNode.hashCode
   override def equals(obj: Any) =
@@ -91,6 +112,7 @@ class Food(node: Node) {
       this.underlyingNode.equals(that.underlyingNode)
     } else false
 
-  override def toString = "Food(%s; %s; )".
-    format(getDatasetId, getName, toJson(getFirstNutrients(3)).toString)
+  override def toString = "Food(%s; %s; %s)".
+    format(getDatasetId, getName, toJson(getFirstNutrientValues(PREVIEW).map(m => toJson(m)).toList).toString)
+
 }

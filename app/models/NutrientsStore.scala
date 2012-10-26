@@ -1,6 +1,7 @@
 package models
 
 import play.api._
+
 import common._
 import NodeTypes.NODE_TYPE
 import RelTypes._

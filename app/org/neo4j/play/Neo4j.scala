@@ -31,7 +31,9 @@ class Neo4j(private val path: String) {
   private var nodeIndex = graphDb.index.forNodes("nodes")
   private var engine: ExecutionEngine = new ExecutionEngine(graphDb)
 
-  def doCypher(query: String): ExecutionResult = doCypher(query, Map())
+  def doCypher(query: String): ExecutionResult =
+    engine.execute(query)
+  //    doCypher(query, Map())
   def doCypher(query: String, params: Map[String, Any]): ExecutionResult =
     engine.execute(query, params)
 

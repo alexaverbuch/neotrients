@@ -26,15 +26,15 @@ object Application extends Controller {
   }
 
   def datasources = Action {
-    Ok("Data Sources\n\n:" + DataSource.all.foldLeft("")((acc, ds) => "%s\n%s".format(acc, ds.toString)))
+    Ok("Data Sources:\n\n" + DataSource.all.foldLeft("")((acc, ds) => "%s\n%s".format(acc, ds.toString)))
   }
 
   def nutrients = Action {
-    Ok("Nutrients\n\n:" + Nutrient.all.foldLeft("")((acc, ds) => "%s\n%s".format(acc, ds.toString)))
+    Ok("Nutrients:\n\n" + Nutrient.all.foldLeft("")((acc, ds) => "%s\n%s".format(acc, ds.toString)))
   }
 
   def foods = Action {
-    Ok("Food\n\n:" + Food.all.foldLeft("")((acc, ds) => "%s\n%s".format(acc, ds.toString)))
+    Ok("Food:\n\n" + Food.all.take(50).foldLeft("")((acc, ds) => "%s\n%s".format(acc, ds.toString)))
   }
 
 }
