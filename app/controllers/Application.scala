@@ -5,49 +5,36 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 
+import org.neo4j.play.Neo4j
+
 import models._
 
 object Application extends Controller {
 
+  def home = Action {
+    Ok("Welcome to Neotrients!")
+  }
+
   def init = Action {
-    NutrientsStore().initialize
-    Ok("Database successfully initialized")
+    NutrientsStore.initialize
+    Ok("Neotrients database successfully initialized")
   }
 
   def shutdown = Action {
-    NutrientsStore().shutDown
-    Ok("Database successfully shutdown")
-  }
-
-  def nutrients = Action {
-    Ok("%s Nutrient records found".format(NutrientsStore().getNutrientCount))
+    Neo4j().shutDown
+    Ok("Neotrients database successfully shutdown")
   }
 
   def datasources = Action {
-    val i = NutrientsStore().getAllDataSources
-    Ok("%s DataSource records found".format(NutrientsStore().getDataSourceCount))
+    Ok("Data Sources\n\n:" + DataSource.all.foldLeft("")((acc, ds) => "%s\n%s".format(acc, ds.toString)))
+  }
+
+  def nutrients = Action {
+    Ok("Nutrients\n\n:" + Nutrient.all.foldLeft("")((acc, ds) => "%s\n%s".format(acc, ds.toString)))
   }
 
   def foods = Action {
-    Ok("%s Food records found".format(NutrientsStore().getFoodCount))
-  }
-
-  def index = Action {
-    Ok("index")
-    //    Redirect(routes.Application.tasks)
-    // ---
-    //      Ok(views.html.index(Task.all(), taskForm))
-    // ---
-    //      implicit request =>
-    //      taskForm.bindFromRequest.fold(
-    //        errors => BadRequest(views.html.index(Task.all(), errors)),
-    //        label => {
-    //          Task.create(label)
-    //          Redirect(routes.Application.tasks)
-    //        })
-    // ---
-    //      Task.delete(id)
-    //      Redirect(routes.Application.tasks)
+    Ok("Food\n\n:" + Food.all.foldLeft("")((acc, ds) => "%s\n%s".format(acc, ds.toString)))
   }
 
 }

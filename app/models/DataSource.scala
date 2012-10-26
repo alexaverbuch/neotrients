@@ -1,14 +1,36 @@
 package models
 
+import scala.collection.JavaConversions._
 import common._
 import RelTypes._
-
-import play.api.db._
-import play.api.Play.current
-import play.api.libs.json._
+import NodeTypes.NODE_TYPE
 import play.api.libs.json.Json._
-
 import org.neo4j.graphdb.Node
+import org.neo4j.helpers.collection.IteratorUtil
+import org.neo4j.play.Neo4j
+
+object DataSource {
+  val DATASET_ID = "ds_id"
+  val COUNTRY = "ds_country"
+  val DATE = "ds_date"
+  val NAME = "ds_name"
+  val URL = "ds_url"
+  val COMMENT = "ds_comment"
+
+  def all: Iterator[DataSource] =
+    Neo4j().getNodesByProperty(NODE_TYPE, NodeTypes.DATASOURCE_NODE_TYPE).map(new DataSource(_))
+
+  def count: Int =
+    IteratorUtil.count(Neo4j().getNodesByProperty(NODE_TYPE, NodeTypes.DATASOURCE_NODE_TYPE))
+
+  def getById(id: String): DataSource =
+    new DataSource(Neo4j().getNodeByProperty(DataSource.DATASET_ID, id))
+
+  def create(id: String, country: String, date: String, name: String, url: String, comment: String) {
+    NutrientsStore.createDataSource(id, country, date, name, url, comment)
+  }
+
+}
 
 class DataSource(personNode: Node) {
   private val underlyingNode: Node = personNode
@@ -19,6 +41,13 @@ class DataSource(personNode: Node) {
   def getName: String = underlyingNode.getProperty(DataSource.NAME).asInstanceOf[String]
   def getUrl: String = underlyingNode.getProperty(DataSource.URL).asInstanceOf[String]
   def getComment: String = underlyingNode.getProperty(DataSource.COMMENT).asInstanceOf[String]
+
+  def delete {
+    Neo4j().withConnection {
+      underlyingNode.getRelationships.foreach(_.delete)
+      underlyingNode.delete
+    }
+  }
 
   def toJsonSmall = toJson(Map(
     DataSource.COUNTRY -> getCountry,
@@ -40,19 +69,4 @@ class DataSource(personNode: Node) {
 
   override def toString = "DataSource(%s; %s; %s; %s)".
     format(getDatasetId, getCountry, getDate, getName)
-}
-
-object DataSource {
-  val DATASET_ID = "ds_id"
-  val COUNTRY = "ds_country"
-  val DATE = "ds_date"
-  val NAME = "ds_name"
-  val URL = "ds_url"
-  val COMMENT = "ds_comment"
-
-  def all(): List[DataSource] = ???
-
-  def create(id: String) { ??? }
-
-  def delete(id: String) { ??? }
 }

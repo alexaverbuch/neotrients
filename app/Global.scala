@@ -1,7 +1,7 @@
 import play.api._
 import play.api.mvc.Results._
 import play.api.mvc.RequestHeader
-import models.NutrientsStore
+import org.neo4j.play.Neo4j
 
 object Global extends GlobalSettings {
   override def onStart(app: Application) {
@@ -9,7 +9,7 @@ object Global extends GlobalSettings {
   }
 
   override def onStop(app: Application) {
-    NutrientsStore().shutDown
+    Neo4j().shutDown
     Logger.info("Application shutdown...")
   }
 }
