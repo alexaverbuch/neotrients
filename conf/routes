@@ -6,12 +6,15 @@
 GET			/                           controllers.Application.home
 
 # Tasks          
-#POST		/tasks/:id/delete       controllers.Application.deleteTask(id: Long)
 GET			/init                	controllers.Application.init
 GET			/shutdown            	controllers.Application.shutdown
 GET			/datasources			controllers.Application.datasources
 GET			/nutrients            	controllers.Application.nutrients
-GET			/foods            		controllers.Application.foods
+GET			/foods       		    controllers.Application.getFoods(namePrefix: Option[String], dataset: Option[String])
+GET			/foods/:name    		    controllers.Application.getFood(name: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET			/assets/*file               controllers.Assets.at(path="/public", file)
+
+# Pagination links, like /clients?page=3
+#GET   /clients              controllers.Clients.list(page: Int ?= 1)

@@ -8,6 +8,7 @@ import play.api.libs.json.Json._
 import org.neo4j.graphdb.Node
 import org.neo4j.helpers.collection.IteratorUtil
 import org.neo4j.play.Neo4j
+import org.neo4j.graphdb.index.Index
 
 object DataSource {
   val DATASET_ID = "ds_id"
@@ -17,18 +18,22 @@ object DataSource {
   val URL = "ds_url"
   val COMMENT = "ds_comment"
 
-  def all: Iterator[DataSource] =
-    Neo4j().getNodesByProperty(NODE_TYPE, NodeTypes.DATASOURCE_NODE_TYPE).map(new DataSource(_))
-
-  def count: Int =
-    IteratorUtil.count(Neo4j().getNodesByProperty(NODE_TYPE, NodeTypes.DATASOURCE_NODE_TYPE))
-
-  def getById(id: String): DataSource =
-    new DataSource(Neo4j().getNodeByProperty(DataSource.DATASET_ID, id))
-
-  def create(id: String, country: String, date: String, name: String, url: String, comment: String) {
-    NutrientsStore.createDataSource(id, country, date, name, url, comment)
+  def all: Iterator[DataSource] = {
+    val index: Index[Node] = Neo4j.getIndexManager.forNodes(NutrientsStore.INDEX_NODES)
+    index.get(NODE_TYPE, NodeTypes.DATASOURCE_NODE_TYPE).iterator.map(new DataSource(_))
   }
+
+  def count: Int = IteratorUtil.count(all)
+
+  def getById(id: String): DataSource = {
+    val index: Index[Node] = Neo4j.getIndexManager.forNodes(NutrientsStore.INDEX_NODES)
+    new DataSource(index.get(DataSource.DATASET_ID, id).getSingle)
+  }
+
+  // TODO
+  //  def create(id: String, country: String, date: String, name: String, url: String, comment: String) {
+  //    NutrientsStore.createDataSource(id, country, date, name, url, comment)
+  //  }
 
 }
 
@@ -42,12 +47,13 @@ class DataSource(personNode: Node) {
   def getUrl: String = underlyingNode.getProperty(DataSource.URL).asInstanceOf[String]
   def getComment: String = underlyingNode.getProperty(DataSource.COMMENT).asInstanceOf[String]
 
-  def delete {
-    Neo4j().withConnection {
-      underlyingNode.getRelationships.foreach(_.delete)
-      underlyingNode.delete
-    }
-  }
+  // TODO
+  //  def delete {
+  //    Neo4j.withConnection {
+  //      underlyingNode.getRelationships.foreach(_.delete)
+  //      underlyingNode.delete
+  //    }
+  //  }
 
   def toJsonSmall = toJson(Map(
     DataSource.COUNTRY -> getCountry,

@@ -9,7 +9,7 @@ object Global extends GlobalSettings {
   }
 
   override def onStop(app: Application) {
-    Neo4j().shutDown
+    Neo4j.shutDown
     Logger.info("Application shutdown...")
   }
 }

@@ -13,59 +13,38 @@ import org.neo4j.cypher.ExecutionResult
 import java.io.File
 import common._
 import play.api._
+import org.neo4j.graphdb.index.IndexManager
 
 object Neo4j {
-  private val PATH = "neo4jdb"
-  private var neo4j: Neo4j = null
-  def apply() = Option(neo4j) match {
-    case Some(aNeo4j) =>
-      aNeo4j
-    case None =>
-      neo4j = new Neo4j(PATH)
-      neo4j
-  }
-}
+  private var graphDb: GraphDatabaseService = null
+  private var engine: ExecutionEngine = null
 
-class Neo4j(private val path: String) {
-  private var graphDb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(path).newGraphDatabase
-  private var nodeIndex = graphDb.index.forNodes("nodes")
-  private var engine: ExecutionEngine = new ExecutionEngine(graphDb)
-
-  def doCypher(query: String): ExecutionResult =
-    engine.execute(query)
-  //    doCypher(query, Map())
-  def doCypher(query: String, params: Map[String, Any]): ExecutionResult =
-    engine.execute(query, params)
-
-  def getNodeByProperty(key: String, value: Any): Node = nodeIndex.get(key, value).getSingle
-  def getNodesByProperty(key: String, value: Any): Iterator[Node] = nodeIndex.get(key, value).iterator
-
-  def createNode: Node = graphDb.createNode
-
-  def getNodeIndex: Index[Node] = nodeIndex
-
-  def shutDown {
-    try {
-      Logger.info("Shutting down database...")
-      graphDb.shutdown
-    } finally {
-      Logger.info("Database shutdown complete")
-    }
-  }
-
-  def createDb {
+  def createDb(path: String) {
     Logger.info("Creating database instance...")
     val config = Map[String, String](
       "neostore.nodestore.db.mapped_memory" -> "10M",
       "string_block_size" -> "60",
       "array_block_size" -> "300")
     graphDb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(path).setConfig(config).newGraphDatabase
-    nodeIndex = graphDb.index.forNodes("nodes")
+    engine = new ExecutionEngine(graphDb)
     registerShutdownHook
     Logger.info("Database created")
   }
 
-  def clearDb {
+  def shutDown {
+    Option(graphDb) match {
+      case Some(graphDb) =>
+        try {
+          Logger.info("Shutting down database...")
+          graphDb.shutdown
+        } finally {
+          Logger.info("Database shutdown complete")
+        }
+      case None => Logger.info("No database to shutdown")
+    }
+  }
+
+  def clearDb(path: String) {
     Logger.info("Deleting database directory...")
     FileUtils.deleteRecursively(new File(path))
     Logger.info("Database deleted")
@@ -80,6 +59,14 @@ class Neo4j(private val path: String) {
       tx.finish
     }
   }
+
+  def doCypher(query: String): ExecutionResult = doCypher(query, Map())
+  def doCypher(query: String, params: Map[String, Any]): ExecutionResult =
+    engine.execute(query, params)
+
+  def _createNode: Node = graphDb.createNode
+
+  def getIndexManager: IndexManager = graphDb.index
 
   private def registerShutdownHook {
     Runtime.getRuntime.addShutdownHook(new Thread { override def run = graphDb.shutdown })
