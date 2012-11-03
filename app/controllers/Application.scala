@@ -14,13 +14,13 @@ import models._
 object Application extends Controller {
 
   def home = Action {
-    Food.create("testid", "testname", "this is just a test", "scientific what?")
+    //    Food.create("testid", "testname", "this is just a test", "scientific what?")
     Ok("Welcome to Neotrients!")
   }
 
   def getFood(name: String) = Action {
     Food.getByName(name) match {
-      case Some(food) => Ok(food.toJsonSmall)
+      case Some(food) => Ok(food.toJsonBig)
       case None => NotFound("Food not found: %s".format(name))
     }
   }
